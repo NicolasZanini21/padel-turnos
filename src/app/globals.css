@@ -1,26 +1,64 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Identidad visual (diseño técnico v1, sección 5).
+ * Los componentes usan solo los tokens semánticos (bg-fondo, text-texto-suave, bg-primario...).
+ * Si el club manda sus colores oficiales, se cambian acá y nada más.
+ */
+@theme {
+  /* Paleta */
+  --color-lima-400: #afe122;
+  --color-lima-600: #7a9c14;
+  --color-lima-700: #5b750f;
+  --color-azul-400: #4da3e8;
+  --color-azul-500: #0986df;
+  --color-azul-600: #0a6cb5;
+  --color-noche-950: #0c1014;
+  --color-noche-900: #141a20;
+  --color-noche-800: #1e262d;
+  --color-noche-700: #2a3136;
+  --color-noche-400: #7d8994;
+  --color-noche-300: #a7b1ba;
+  --color-ambar-400: #fbbf24;
+  --color-rojo-400: #f87171;
+
+  /* Tokens semánticos */
+  --color-fondo: var(--color-noche-950);
+  --color-superficie: var(--color-noche-900);
+  --color-superficie-2: var(--color-noche-800);
+  --color-borde: var(--color-noche-700);
+  --color-borde-control: var(--color-noche-400);
+  --color-texto: #ffffff;
+  --color-texto-suave: var(--color-noche-300);
+  --color-primario: var(--color-lima-400);
+  --color-primario-hover: var(--color-lima-600);
+  --color-sobre-primario: var(--color-noche-950);
+  --color-acento: var(--color-azul-400);
+  --color-acento-solido: var(--color-azul-600);
+  --color-sobre-acento: #ffffff;
+  --color-foco: var(--color-azul-500);
+  --color-estado-libre: var(--color-lima-400);
+  --color-estado-confirmada: var(--color-lima-400);
+  --color-estado-pendiente: var(--color-ambar-400);
+  --color-estado-cancelada: var(--color-rojo-400);
+  --color-estado-vencida: var(--color-rojo-400);
+  --color-error: var(--color-rojo-400);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-titulo: var(--font-montserrat), var(--font-inter), ui-sans-serif, sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-fondo);
+  color: var(--color-texto);
+}
+
+/* Anillo de foco visible en todos los controles (regla 3 de contraste) */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-foco);
+  outline-offset: 2px;
 }
