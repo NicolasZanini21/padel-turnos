@@ -300,6 +300,12 @@ begin
      or old.estado = 'vencida' and new.estado = 'confirmada' then
     new.confirmada_en := now();
     new.vence_en := null;
+  elsif old.estado = 'cancelada' and new.estado = 'confirmada' and old.origen = 'fijo' then
+    -- Reactivar una fecha de turno fijo salteada o cancelada (reactivar_fecha_fija)
+    new.confirmada_en := now();
+    new.cancelada_en := null;
+    new.cancelada_por := null;
+    new.motivo_cancelacion := null;
   elsif old.estado in ('pendiente_pago', 'confirmada') and new.estado = 'cancelada' then
     new.cancelada_en := now();
     new.cancelada_por := coalesce(new.cancelada_por, 'admin');
@@ -772,19 +778,24 @@ begin
     return 'ya_activa';
   end if;
 
-  -- Si la fecha ya existe como fila cancelada, el unique (turno_fijo_id, inicio) impide
-  -- generarla otra vez como 'fijo': se crea una reserva confirmada de origen 'admin'
-  -- con los datos del turno fijo. Si el horario ya lo tomó otro, queda como conflicto.
+  -- Si la fecha ya existe como fila cancelada, se la vuelve a confirmar (misma fila).
+  -- Si en el medio otro tomó el horario, la exclusion constraint lo impide y queda en conflicto.
   if exists (select 1 from public.reservas where turno_fijo_id = tf.id and inicio = v_inicio) then
     begin
-      insert into public.reservas (cancha_id, inicio, fin, nombre, telefono, email, estado, origen, precio_ars, notas_admin)
-      values (tf.cancha_id, v_inicio, v_inicio + tf.duracion, tf.nombre, tf.telefono, tf.email,
-              'confirmada', 'admin', tf.precio_ars, format('Fecha reactivada del turno fijo #%s', tf.id));
+      update public.reservas
+         set estado = 'confirmada', nombre = tf.nombre, telefono = tf.telefono, email = tf.email
+       where turno_fijo_id = tf.id and inicio = v_inicio and estado = 'cancelada';
     exception when exclusion_violation then
       insert into public.turno_fijo_excepciones (turno_fijo_id, fecha, tipo, detalle)
       values (tf.id, p_fecha, 'conflicto', 'el horario ya fue reservado');
       return 'conflicto';
     end;
+    -- El recordatorio descartado al saltear vuelve a quedar pendiente
+    update public.notificaciones
+       set estado = 'pendiente', enviar_desde = v_inicio - interval '5 hours', intentos = 0, ultimo_error = null
+     where reserva_id = (select id from public.reservas where turno_fijo_id = tf.id and inicio = v_inicio)
+       and tipo = 'recordatorio' and estado = 'descartada'
+       and tf.avisos_por_mail and v_inicio - interval '5 hours' > now();
     return 'reactivada';
   end if;
 
