@@ -135,94 +135,104 @@ export function Agenda({
           No hay turnos este día.
         </p>
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-borde bg-superficie">
-          <table className="w-full min-w-[600px] table-fixed border-collapse text-sm">
-            <thead>
-              <tr className="border-b border-borde text-texto-suave">
-                <th
-                  scope="col"
-                  className="sticky left-0 z-10 w-20 bg-superficie px-3 py-2 text-left font-medium sm:w-24"
-                >
-                  Hora
-                </th>
-                {canchas.map((c) => (
+        <>
+          {canchas.length > 2 ? (
+            <p className="text-sm text-texto-suave sm:hidden">
+              Deslizá la tabla hacia el costado para ver todas las canchas{" "}
+              <span aria-hidden>→</span>
+            </p>
+          ) : null}
+          <div className="overflow-x-auto rounded-2xl border border-borde bg-superficie">
+            <table className="w-full min-w-[600px] table-fixed border-collapse text-sm">
+              <thead>
+                <tr className="border-b border-borde text-texto-suave">
                   <th
-                    key={c.id}
                     scope="col"
-                    className="px-2 py-2 text-left font-medium"
+                    className="sticky left-0 z-10 w-20 bg-superficie px-3 py-2 text-left font-medium sm:w-24"
                   >
-                    {c.nombre}
+                    Hora
                   </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {slots.map((s) => {
-                const s0 = new Date(s.inicio).getTime();
-                const s1 = new Date(s.fin).getTime();
-                return (
-                  <tr
-                    key={s.inicio}
-                    className="border-b border-borde last:border-0"
-                  >
+                  {canchas.map((c) => (
                     <th
-                      scope="row"
-                      className="sticky left-0 z-10 bg-superficie px-3 py-1.5 text-left align-top font-semibold tabular-nums"
+                      key={c.id}
+                      scope="col"
+                      className="px-2 py-2 text-left font-medium"
                     >
-                      {hora(s.inicio)}
-                      <span className="block text-xs font-normal text-texto-suave">
-                        {hora(s.fin)}
-                      </span>
+                      {c.nombre}
                     </th>
-                    {canchas.map((c) => {
-                      const r = reservas.find(
-                        (x) =>
-                          x.cancha_id === c.id &&
-                          seSuperpone(
-                            s0,
-                            s1,
-                            new Date(x.inicio).getTime(),
-                            new Date(x.fin).getTime(),
-                          ),
-                      );
-                      const b = bloqueosMs.find(
-                        (x) =>
-                          (x.cancha_id === null || x.cancha_id === c.id) &&
-                          seSuperpone(s0, s1, x.ms[0], x.ms[1]),
-                      );
-                      return (
-                        <td key={c.id} className="p-1 align-top">
-                          {r ? (
-                            <CeldaReserva r={r} />
-                          ) : b ? (
-                            <div className="min-h-11 rounded-lg bg-noche-700 px-2 py-1.5 text-xs text-texto-suave">
-                              Bloqueado
-                              <span className="block truncate">{b.motivo}</span>
-                            </div>
-                          ) : s0 > ahora ? (
-                            <button
-                              type="button"
-                              onClick={() => setNueva({ cancha: c, slot: s })}
-                              className="flex min-h-11 w-full items-center justify-center rounded-lg border border-dashed border-borde-control text-xs text-texto-suave hover:border-primario hover:text-primario"
-                              aria-label={`Reserva manual ${c.nombre} ${hora(s.inicio)}`}
-                            >
-                              + Reservar
-                            </button>
-                          ) : (
-                            <div
-                              className="min-h-11 rounded-lg bg-superficie-2/40"
-                              aria-label="Libre, ya pasó"
-                            />
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {slots.map((s) => {
+                  const s0 = new Date(s.inicio).getTime();
+                  const s1 = new Date(s.fin).getTime();
+                  return (
+                    <tr
+                      key={s.inicio}
+                      className="border-b border-borde last:border-0"
+                    >
+                      <th
+                        scope="row"
+                        className="sticky left-0 z-10 bg-superficie px-3 py-1.5 text-left align-top font-semibold tabular-nums"
+                      >
+                        {hora(s.inicio)}
+                        <span className="block text-xs font-normal text-texto-suave">
+                          {hora(s.fin)}
+                        </span>
+                      </th>
+                      {canchas.map((c) => {
+                        const r = reservas.find(
+                          (x) =>
+                            x.cancha_id === c.id &&
+                            seSuperpone(
+                              s0,
+                              s1,
+                              new Date(x.inicio).getTime(),
+                              new Date(x.fin).getTime(),
+                            ),
+                        );
+                        const b = bloqueosMs.find(
+                          (x) =>
+                            (x.cancha_id === null || x.cancha_id === c.id) &&
+                            seSuperpone(s0, s1, x.ms[0], x.ms[1]),
+                        );
+                        return (
+                          <td key={c.id} className="p-1 align-top">
+                            {r ? (
+                              <CeldaReserva r={r} />
+                            ) : b ? (
+                              <div className="min-h-11 rounded-lg bg-noche-700 px-2 py-1.5 text-xs text-texto-suave">
+                                Bloqueado
+                                <span className="block truncate">
+                                  {b.motivo}
+                                </span>
+                              </div>
+                            ) : s0 > ahora ? (
+                              <button
+                                type="button"
+                                onClick={() => setNueva({ cancha: c, slot: s })}
+                                className="flex min-h-11 w-full items-center justify-center rounded-lg border border-dashed border-borde-control text-xs text-texto-suave hover:border-primario hover:text-primario"
+                                aria-label={`Reserva manual ${c.nombre} ${hora(s.inicio)}`}
+                              >
+                                + Reservar
+                              </button>
+                            ) : (
+                              <div
+                                className="min-h-11 rounded-lg bg-superficie-2/40"
+                                aria-label="Libre, ya pasó"
+                              />
+                            )}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
 
       <Bloqueos fecha={fecha} canchas={canchas} bloqueos={bloqueosMs} />
@@ -295,7 +305,7 @@ function DialogoReservaManual({
     <dialog
       ref={ref}
       onClose={alCerrar}
-      className="m-auto w-full max-w-md rounded-3xl border border-borde bg-superficie p-0 text-texto backdrop:bg-black/70"
+      className="m-auto w-[calc(100%-2rem)] max-w-md rounded-3xl border border-borde bg-superficie p-0 text-texto backdrop:bg-black/70"
     >
       <form action={accion} className="space-y-4 p-6">
         <h2 className="font-titulo text-xl font-bold">
@@ -433,7 +443,7 @@ function Bloqueos({
             ))}
           </select>
         </label>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid gap-3 sm:grid-cols-2">
           <Campo
             etiqueta="Desde"
             nombre="desde"

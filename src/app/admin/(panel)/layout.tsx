@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Logo } from "@/components/Logo";
 import { NavAdmin } from "@/components/admin/NavAdmin";
-import { salir } from "@/app/admin/acciones";
+import { BotonSalir } from "@/components/admin/BotonSalir";
 
 export const metadata: Metadata = {
   title: { default: "Panel", template: "%s · Panel · Global Padel Center" },
@@ -21,11 +21,7 @@ export default function LayoutPanel({ children }: LayoutProps<"/admin">) {
               <NavAdmin />
             </div>
           </Suspense>
-          <form action={salir} className="ml-auto">
-            <button type="submit" className="min-h-11 rounded-lg px-3 text-sm text-texto-suave hover:bg-superficie-2">
-              Salir
-            </button>
-          </form>
+          <BotonSalir />
         </div>
       </header>
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6">{children}</main>
