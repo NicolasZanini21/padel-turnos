@@ -24,7 +24,9 @@ export default function Inicio({ searchParams }: PageProps<"/">) {
 }
 
 async function Contenido({ searchParams }: { searchParams: PageProps<"/">["searchParams"] }) {
-  const [params, config] = await Promise.all([searchParams, obtenerConfig()]);
+  // Primero los searchParams: así el build no consulta la base al prerenderizar.
+  const params = await searchParams;
+  const config = await obtenerConfig();
   const pedida = typeof params.fecha === "string" ? params.fecha : undefined;
   const ultimo = sumarDias(config.hoy, config.dias_max_anticipacion);
   const fecha = esFechaISO(pedida) && pedida >= config.hoy && pedida <= ultimo ? pedida : config.hoy;

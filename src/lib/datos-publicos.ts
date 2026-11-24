@@ -27,6 +27,12 @@ export async function obtenerWhatsapp(): Promise<string> {
   "use cache";
   cacheLife("minutes");
   cacheTag("config");
-  const { data } = await supabasePublico().rpc("config_publica");
-  return (data as ConfigPublica | null)?.whatsapp_numero ?? "";
+  // Nunca rompe la página (ni el build, que la prerenderiza): si la base no responde,
+  // el botón no se muestra y se vuelve a intentar al vencer el cache.
+  try {
+    const { data } = await supabasePublico().rpc("config_publica");
+    return (data as ConfigPublica | null)?.whatsapp_numero ?? "";
+  } catch {
+    return "";
+  }
 }
