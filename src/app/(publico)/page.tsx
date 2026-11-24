@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { Encabezado, Pie } from "@/components/Encabezado";
 import { Logo } from "@/components/Logo";
 import { Grilla } from "@/components/reserva/Grilla";
 import { obtenerConfig, obtenerDisponibilidad } from "@/lib/datos-publicos";
@@ -9,7 +8,6 @@ import { diaCorto, esFechaISO, sumarDias } from "@/lib/tiempo";
 export default function Inicio({ searchParams }: PageProps<"/">) {
   return (
     <>
-      <Encabezado />
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 pb-10">
         <section className="flex flex-col items-center pt-4 pb-4 text-center sm:pt-10">
           <h1 className="sr-only">Global Padel Center</h1>
@@ -21,7 +19,6 @@ export default function Inicio({ searchParams }: PageProps<"/">) {
           <Contenido searchParams={searchParams} />
         </Suspense>
       </main>
-      <Pie />
     </>
   );
 }

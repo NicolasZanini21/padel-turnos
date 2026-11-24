@@ -1,4 +1,5 @@
 import "server-only";
+import { cacheLife, cacheTag } from "next/cache";
 import { supabasePublico } from "@/lib/supabase/server";
 import type { ConfigPublica, ReservaPublica, Turno } from "@/lib/tipos";
 
@@ -19,4 +20,13 @@ export async function obtenerReserva(token: string): Promise<ReservaPublica | nu
   const { data, error } = await supabasePublico().rpc("ver_reserva", { p_token: token });
   if (error) throw new Error(`ver_reserva: ${error.message}`);
   return (data as ReservaPublica | null) ?? null;
+}
+
+/** Número de WhatsApp del club. Cacheado unos minutos; se invalida al guardar la configuración. */
+export async function obtenerWhatsapp(): Promise<string> {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag("config");
+  const { data } = await supabasePublico().rpc("config_publica");
+  return (data as ConfigPublica | null)?.whatsapp_numero ?? "";
 }

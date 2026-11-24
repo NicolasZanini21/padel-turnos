@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { Encabezado, Pie } from "@/components/Encabezado";
 import { Logo } from "@/components/Logo";
 import { CuentaRegresiva } from "@/components/reserva/CuentaRegresiva";
 import { clasesBoton, EtiquetaEstado } from "@/components/ui";
@@ -19,13 +18,11 @@ export const metadata: Metadata = {
 export default function PaginaReserva(props: PageProps<"/reserva/[token]">) {
   return (
     <>
-      <Encabezado />
       <main className="mx-auto w-full max-w-md flex-1 px-4 py-8">
         <Suspense fallback={<div className="h-96 animate-pulse rounded-3xl bg-superficie" aria-busy="true" />}>
           <Ticket {...props} />
         </Suspense>
       </main>
-      <Pie />
     </>
   );
 }

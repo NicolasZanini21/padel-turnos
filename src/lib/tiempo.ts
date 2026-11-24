@@ -72,3 +72,14 @@ export function precio(ars: number | null | undefined): string | null {
   if (ars == null) return null;
   return new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 }).format(ars);
 }
+
+/** Interval de Postgres ("01:30:00", "1 day 02:00:00", "3 days") → minutos */
+export function intervaloAMinutos(intervalo: string | null | undefined): number {
+  if (!intervalo) return 0;
+  let total = 0;
+  const dias = /(-?\d+)\s+days?/.exec(intervalo);
+  if (dias) total += Number(dias[1]) * 24 * 60;
+  const hms = /(\d+):(\d{2})(?::(\d{2}))?/.exec(intervalo);
+  if (hms) total += Number(hms[1]) * 60 + Number(hms[2]);
+  return total;
+}
