@@ -23,9 +23,6 @@ export default function PaginaTorneos() {
         <svg aria-hidden viewBox="0 0 400 400" className="pointer-events-none absolute -top-24 -right-24 size-80 text-acento-solido opacity-40">
           <circle cx="200" cy="200" r="150" fill="none" stroke="currentColor" strokeWidth="14" strokeDasharray="620 400" strokeLinecap="round" />
         </svg>
-        <svg aria-hidden viewBox="0 0 100 100" className="pointer-events-none absolute -bottom-10 -left-10 size-40 text-primario opacity-20">
-          <circle cx="50" cy="50" r="46" fill="currentColor" />
-        </svg>
 
         <p className="relative inline-flex items-center gap-2 rounded-full border border-primario px-3 py-1 font-titulo text-xs font-bold tracking-widest text-primario uppercase">
           <span aria-hidden className="size-2 animate-pulse rounded-full bg-primario motion-reduce:animate-none" />

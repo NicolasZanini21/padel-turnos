@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { obtenerWhatsapp } from "@/lib/datos-publicos";
 import { Logo } from "./Logo";
 import { NavPublica } from "./NavPublica";
 
@@ -21,23 +20,12 @@ export function Encabezado() {
 
 export function Pie() {
   return (
+    // pb extra en celular: el botón flotante de WhatsApp queda sobre espacio vacío, sin tapar texto
     <footer className="mt-auto border-t border-borde">
-      <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-2 px-4 py-5 pr-20 text-sm text-texto-suave sm:pr-4">
-        <span>Global Padel Center · Entre Ríos 542, Rosario</span>
-        <Suspense fallback={null}>
-          <LinkWhatsappPie />
-        </Suspense>
+      <div className="mx-auto flex max-w-3xl flex-col items-center gap-1 px-4 pt-6 pb-24 text-center text-sm text-texto-suave sm:pb-6">
+        <span className="font-titulo font-bold tracking-wide text-texto uppercase">Global Padel Center</span>
+        <span>Entre Ríos 542 · Rosario</span>
       </div>
     </footer>
-  );
-}
-
-async function LinkWhatsappPie() {
-  const numero = await obtenerWhatsapp();
-  if (!numero) return null;
-  return (
-    <a className="text-acento underline-offset-4 hover:underline" href={`https://wa.me/${numero}`} target="_blank" rel="noreferrer">
-      WhatsApp del club
-    </a>
   );
 }
