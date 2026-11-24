@@ -6,9 +6,9 @@ import { NavPublica } from "./NavPublica";
 export function Encabezado() {
   return (
     <header className="sticky top-0 z-20 border-b border-borde bg-fondo/95 backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-3xl items-center gap-3 px-4 sm:h-16">
+      <div className="mx-auto flex h-14 max-w-3xl items-center gap-2 px-4 sm:h-16 sm:gap-3">
         <Link href="/" className="shrink-0 rounded-md" aria-label="Global Padel Center, inicio">
-          <Logo ancho={84} className="h-8 w-auto sm:h-10" prioridad />
+          <Logo ancho={84} className="h-7 w-auto sm:h-10" prioridad />
         </Link>
         <Suspense fallback={<div className="ml-auto h-11" />}>
           <NavPublica />

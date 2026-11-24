@@ -50,11 +50,11 @@ export function Grilla({ fecha, turnosIniciales }: { fecha: string; turnosInicia
 
   return (
     <section aria-labelledby="titulo-grilla">
-      <div className="mb-3 flex items-baseline justify-between gap-3">
+      <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
         <h2 id="titulo-grilla" className="font-titulo text-lg font-bold">
           {capitalizar(diaLargoDeFecha(fecha))}
         </h2>
-        <p className="text-sm text-texto-suave" aria-live="polite">
+        <p className="text-sm whitespace-nowrap text-texto-suave" aria-live="polite">
           {filas.length === 0 ? "" : libres === 0 ? "Sin turnos libres" : `${libres} turnos libres`}
         </p>
       </div>

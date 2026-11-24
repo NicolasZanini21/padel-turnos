@@ -1,7 +1,7 @@
 -- Datos semilla. Los valores marcados [SUPUESTO] se cambian acá o desde /admin/configuracion.
 
--- [SUPUESTO] número de WhatsApp de prueba: reemplazar por el del club (formato wa.me, solo dígitos)
-insert into public.config (whatsapp_numero) values ('5493410000000')
+-- WhatsApp del club (formato wa.me, solo dígitos)
+insert into public.config (whatsapp_numero) values ('5493417560704')
 on conflict (id) do nothing;
 
 insert into public.canchas (nombre, orden)
