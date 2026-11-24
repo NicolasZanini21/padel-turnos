@@ -53,7 +53,7 @@ async function Contenido({ params, searchParams }: PageProps<"/admin/turnos-fijo
 
   return (
     <div className="space-y-6">
-      <Link href="/admin/turnos-fijos" className="text-sm text-acento underline-offset-4 hover:underline">
+      <Link href="/admin/turnos-fijos" className="inline-flex min-h-11 items-center text-sm text-acento underline-offset-4 hover:underline">
         ← Turnos fijos
       </Link>
       {sp.creado !== undefined ? (

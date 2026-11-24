@@ -66,12 +66,12 @@ export function ConfigHorario({ franjas }: { franjas: FranjaEditable[] }) {
           return (
             <div key={dia} className="py-4 first:pt-0" role="group" aria-label={DIAS[dia]}>
               <div className="flex flex-wrap items-center gap-2">
-                <h3 className="w-28 font-semibold">{DIAS[dia]}</h3>
+                <h3 className="font-semibold sm:w-28">{DIAS[dia]}</h3>
                 {!delDia.length ? <span className="text-sm text-estado-cancelada">Cerrado</span> : null}
-                <div className="ml-auto flex gap-1">
+                <div className="-mx-3 flex w-full flex-wrap gap-1 sm:mx-0 sm:ml-auto sm:w-auto">
                   {delDia.length ? (
                     <button type="button" onClick={() => copiarATodos(dia)} className="min-h-11 rounded-lg px-3 text-sm text-acento hover:bg-superficie-2">
-                      Copiar a {dia <= 5 ? "lunes a viernes" : "sábado y domingo"}
+                      Copiar a {dia <= 5 ? "lun a vie" : "sáb y dom"}
                     </button>
                   ) : null}
                   <button type="button" onClick={() => agregar(dia)} className="min-h-11 rounded-lg px-3 text-sm text-acento hover:bg-superficie-2">
@@ -115,7 +115,7 @@ export function ConfigHorario({ franjas }: { franjas: FranjaEditable[] }) {
                     <button
                       type="button"
                       onClick={() => editar(filas.filter((x) => x.clave !== f.clave))}
-                      className="min-h-11 rounded-lg px-3 text-sm text-error hover:bg-error/10"
+                      className="min-h-11 justify-self-start rounded-lg px-3 text-sm text-error hover:bg-error/10 sm:justify-self-auto"
                       aria-label={`Quitar horario de ${f.apertura} a ${f.cierre} del ${DIAS[dia].toLowerCase()}`}
                     >
                       Quitar

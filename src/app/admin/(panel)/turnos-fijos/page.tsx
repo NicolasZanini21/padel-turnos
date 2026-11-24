@@ -7,11 +7,27 @@ import { capitalizar, diaLargo, hora } from "@/lib/tiempo";
 
 export const metadata = { title: "Turnos fijos" };
 
-const DIAS = ["", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+const DIAS = [
+  "",
+  "Lunes",
+  "Martes",
+  "Miércoles",
+  "Jueves",
+  "Viernes",
+  "Sábado",
+  "Domingo",
+];
 
 export default function PaginaTurnosFijos() {
   return (
-    <Suspense fallback={<div className="h-96 animate-pulse rounded-2xl bg-superficie" aria-busy="true" />}>
+    <Suspense
+      fallback={
+        <div
+          className="h-96 animate-pulse rounded-2xl bg-superficie"
+          aria-busy="true"
+        />
+      }
+    >
       <Lista />
     </Suspense>
   );
@@ -35,7 +51,9 @@ async function Lista() {
   const [fijos, proximas, conflictos] = await Promise.all([
     supabase
       .from("turnos_fijos")
-      .select("id, dia_semana, hora_inicio, nombre, telefono, vigente_hasta, canchas(nombre)")
+      .select(
+        "id, dia_semana, hora_inicio, nombre, telefono, vigente_hasta, canchas(nombre)",
+      )
       .is("dado_de_baja_en", null)
       .or(`vigente_hasta.is.null,vigente_hasta.gte.${hoy}`)
       .order("dia_semana")
@@ -55,7 +73,8 @@ async function Lista() {
   ]);
 
   const proxima = new Map<number, string>();
-  for (const r of proximas.data ?? []) if (!proxima.has(r.turno_fijo_id)) proxima.set(r.turno_fijo_id, r.inicio);
+  for (const r of proximas.data ?? [])
+    if (!proxima.has(r.turno_fijo_id)) proxima.set(r.turno_fijo_id, r.inicio);
   const lista = (fijos.data ?? []) as unknown as Fijo[];
   const nConflictos = conflictos.data?.length ?? 0;
 
@@ -63,64 +82,145 @@ async function Lista() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="font-titulo text-2xl font-extrabold">Turnos fijos</h1>
-        <Link href="/admin/turnos-fijos/nuevo" className={clasesBoton("primario")}>
+        <Link
+          href="/admin/turnos-fijos/nuevo"
+          className={clasesBoton("primario")}
+        >
           Nuevo turno fijo
         </Link>
       </div>
 
       {nConflictos > 0 ? (
-        <p role="alert" className="rounded-xl border border-estado-pendiente/60 bg-estado-pendiente/10 p-3 text-sm">
-          Hay {nConflictos} {nConflictos === 1 ? "fecha" : "fechas"} de turnos fijos que no se generaron porque ya había otra reserva.
-          Revisalas en el detalle de cada turno.
+        <p
+          role="alert"
+          className="rounded-xl border border-estado-pendiente/60 bg-estado-pendiente/10 p-3 text-sm"
+        >
+          Hay {nConflictos} {nConflictos === 1 ? "fecha" : "fechas"} de turnos
+          fijos que no se generaron porque ya había otra reserva. Revisalas en
+          el detalle de cada turno.
         </p>
       ) : null}
 
       {lista.length === 0 ? (
         <p className="rounded-2xl border border-borde bg-superficie p-6 text-texto-suave">
-          Todavía no hay turnos fijos. Un turno fijo reserva la misma cancha todas las semanas, así la web nunca la ofrece ese día.
+          Todavía no hay turnos fijos. Un turno fijo reserva la misma cancha
+          todas las semanas, así la web nunca la ofrece ese día.
         </p>
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-borde bg-superficie">
-          <table className="w-full min-w-[640px] text-sm">
-            <thead>
-              <tr className="border-b border-borde text-left text-texto-suave">
-                <th className="px-4 py-3 font-medium">Día y hora</th>
-                <th className="px-4 py-3 font-medium">Cancha</th>
-                <th className="px-4 py-3 font-medium">Cliente</th>
-                <th className="px-4 py-3 font-medium">Próxima fecha</th>
-                <th className="px-4 py-3 font-medium"><span className="sr-only">Acciones</span></th>
-              </tr>
-            </thead>
-            <tbody>
-              {lista.map((f) => {
-                const enConflicto = conflictos.data?.some((c) => c.turno_fijo_id === f.id);
-                const p = proxima.get(f.id);
-                return (
-                  <tr key={f.id} className="border-b border-borde last:border-0">
-                    <td className="px-4 py-3 font-semibold">
-                      {DIAS[f.dia_semana]} {f.hora_inicio.slice(0, 5)}
-                    </td>
-                    <td className="px-4 py-3">{f.canchas?.nombre}</td>
-                    <td className="px-4 py-3">
-                      {f.nombre}
-                      <span className="block text-xs text-texto-suave">{telefonoLegible(f.telefono)}</span>
-                    </td>
-                    <td className="px-4 py-3">
-                      {p ? `${capitalizar(diaLargo(p))}, ${hora(p)}` : <span className="text-texto-suave">—</span>}
-                      {enConflicto ? <span className="block text-xs font-semibold text-estado-pendiente">Tiene fechas en conflicto</span> : null}
-                      {f.vigente_hasta ? <span className="block text-xs text-texto-suave">Hasta el {f.vigente_hasta}</span> : null}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <Link href={`/admin/turnos-fijos/${f.id}`} className="text-acento underline-offset-4 hover:underline">
-                        Ver detalle
-                      </Link>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        <>
+          {/* Celular: una tarjeta por turno fijo */}
+          <ul className="space-y-3 sm:hidden">
+            {lista.map((f) => {
+              const enConflicto = conflictos.data?.some(
+                (c) => c.turno_fijo_id === f.id,
+              );
+              const p = proxima.get(f.id);
+              return (
+                <li key={f.id}>
+                  <Link
+                    href={`/admin/turnos-fijos/${f.id}`}
+                    className="block rounded-2xl border border-borde bg-superficie p-4 active:bg-superficie-2"
+                  >
+                    <span className="flex items-baseline justify-between gap-2">
+                      <span className="font-semibold">
+                        {DIAS[f.dia_semana]} {f.hora_inicio.slice(0, 5)}
+                      </span>
+                      <span className="text-sm text-texto-suave">
+                        {f.canchas?.nombre}
+                      </span>
+                    </span>
+                    <span className="mt-1 block">{f.nombre}</span>
+                    <span className="block text-sm text-texto-suave">
+                      {telefonoLegible(f.telefono)}
+                    </span>
+                    <span className="mt-2 block text-sm">
+                      Próxima:{" "}
+                      {p ? `${capitalizar(diaLargo(p))}, ${hora(p)}` : "—"}
+                    </span>
+                    {enConflicto ? (
+                      <span className="block text-sm font-semibold text-estado-pendiente">
+                        Tiene fechas en conflicto
+                      </span>
+                    ) : null}
+                    {f.vigente_hasta ? (
+                      <span className="block text-sm text-texto-suave">
+                        Hasta el {f.vigente_hasta}
+                      </span>
+                    ) : null}
+                    <span className="mt-2 block text-sm text-acento">
+                      Ver detalle →
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+          <div className="hidden overflow-x-auto rounded-2xl border border-borde bg-superficie sm:block">
+            <table className="w-full min-w-[640px] text-sm">
+              <thead>
+                <tr className="border-b border-borde text-left text-texto-suave">
+                  <th className="px-4 py-3 font-medium">Día y hora</th>
+                  <th className="px-4 py-3 font-medium">Cancha</th>
+                  <th className="px-4 py-3 font-medium">Cliente</th>
+                  <th className="px-4 py-3 font-medium">Próxima fecha</th>
+                  <th className="px-4 py-3 font-medium">
+                    <span className="sr-only">Acciones</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {lista.map((f) => {
+                  const enConflicto = conflictos.data?.some(
+                    (c) => c.turno_fijo_id === f.id,
+                  );
+                  const p = proxima.get(f.id);
+                  return (
+                    <tr
+                      key={f.id}
+                      className="border-b border-borde last:border-0"
+                    >
+                      <td className="px-4 py-3 font-semibold">
+                        {DIAS[f.dia_semana]} {f.hora_inicio.slice(0, 5)}
+                      </td>
+                      <td className="px-4 py-3">{f.canchas?.nombre}</td>
+                      <td className="px-4 py-3">
+                        {f.nombre}
+                        <span className="block text-xs text-texto-suave">
+                          {telefonoLegible(f.telefono)}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        {p ? (
+                          `${capitalizar(diaLargo(p))}, ${hora(p)}`
+                        ) : (
+                          <span className="text-texto-suave">—</span>
+                        )}
+                        {enConflicto ? (
+                          <span className="block text-xs font-semibold text-estado-pendiente">
+                            Tiene fechas en conflicto
+                          </span>
+                        ) : null}
+                        {f.vigente_hasta ? (
+                          <span className="block text-xs text-texto-suave">
+                            Hasta el {f.vigente_hasta}
+                          </span>
+                        ) : null}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <Link
+                          href={`/admin/turnos-fijos/${f.id}`}
+                          className="text-acento underline-offset-4 hover:underline"
+                        >
+                          Ver detalle
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </div>
   );
