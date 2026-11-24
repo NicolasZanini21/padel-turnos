@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { Encabezado, Pie } from "@/components/Encabezado";
 import { Logo } from "@/components/Logo";
 import { BotonCancelar } from "@/components/reserva/BotonCancelar";
 import { clasesBoton } from "@/components/ui";
@@ -16,13 +15,11 @@ export const metadata: Metadata = { title: "Cancelar reserva", robots: { index: 
 export default function PaginaCancelar(props: PageProps<"/reserva/[token]/cancelar">) {
   return (
     <>
-      <Encabezado />
       <main className="mx-auto w-full max-w-md flex-1 px-4 py-8">
         <Suspense fallback={<div className="h-72 animate-pulse rounded-3xl bg-superficie" aria-busy="true" />}>
           <Confirmacion {...props} />
         </Suspense>
       </main>
-      <Pie />
     </>
   );
 }

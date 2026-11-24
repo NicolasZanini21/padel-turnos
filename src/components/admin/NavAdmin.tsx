@@ -7,6 +7,7 @@ const LINKS = [
   { href: "/admin", texto: "Reservas" },
   { href: "/admin/agenda", texto: "Agenda" },
   { href: "/admin/turnos-fijos", texto: "Turnos fijos" },
+  { href: "/admin/configuracion", texto: "Configuración" },
 ] as const;
 
 export function NavAdmin() {

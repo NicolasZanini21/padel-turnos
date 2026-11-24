@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { Encabezado, Pie } from "@/components/Encabezado";
 import { Logo } from "@/components/Logo";
 import { Grilla } from "@/components/reserva/Grilla";
 import { obtenerConfig, obtenerDisponibilidad } from "@/lib/datos-publicos";
@@ -9,7 +8,6 @@ import { diaCorto, esFechaISO, sumarDias } from "@/lib/tiempo";
 export default function Inicio({ searchParams }: PageProps<"/">) {
   return (
     <>
-      <Encabezado />
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 pb-10">
         <section className="flex flex-col items-center pt-4 pb-4 text-center sm:pt-10">
           <h1 className="sr-only">Global Padel Center</h1>
@@ -21,13 +19,14 @@ export default function Inicio({ searchParams }: PageProps<"/">) {
           <Contenido searchParams={searchParams} />
         </Suspense>
       </main>
-      <Pie />
     </>
   );
 }
 
 async function Contenido({ searchParams }: { searchParams: PageProps<"/">["searchParams"] }) {
-  const [params, config] = await Promise.all([searchParams, obtenerConfig()]);
+  // Primero los searchParams: así el build no consulta la base al prerenderizar.
+  const params = await searchParams;
+  const config = await obtenerConfig();
   const pedida = typeof params.fecha === "string" ? params.fecha : undefined;
   const ultimo = sumarDias(config.hoy, config.dias_max_anticipacion);
   const fecha = esFechaISO(pedida) && pedida >= config.hoy && pedida <= ultimo ? pedida : config.hoy;
