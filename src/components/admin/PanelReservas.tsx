@@ -189,7 +189,7 @@ function FilaReserva({
           <p className="text-sm">
             {r.nombre}
             {" · "}
-            <a href={`https://wa.me/${telLimpio}`} className="text-acento underline-offset-4 hover:underline" target="_blank" rel="noreferrer">
+            <a href={`https://wa.me/${telLimpio}`} className="-my-2 inline-block py-2 text-acento underline-offset-4 hover:underline" target="_blank" rel="noreferrer">
               {telefonoLegible(r.telefono)}
             </a>
             {r.email ? <span className="text-texto-suave"> · {r.email}</span> : null}
