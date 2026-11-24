@@ -13,7 +13,11 @@ El diseño técnico completo está en el documento `diseno_tecnico_v1.md` del pr
 | `supabase/seed.sql` | Canchas y horarios de ejemplo (valores **[SUPUESTO]** hasta que confirme el club) |
 | `supabase/tests/` | Pruebas de la base (reserva, doble reserva, vencimiento, mails, cancelación, turnos fijos) |
 | `supabase/functions/` | Edge Function que manda los mails |
-| `src/app/` | Páginas públicas (`/`, `/reserva/[token]`) y panel (`/admin`) |
+| `src/app/` | Páginas públicas (`/`, `/reserva/[token]`) y panel (`/admin`, `/admin/agenda`, `/admin/turnos-fijos`) |
+
+## Puesta en marcha
+
+Supabase, Resend y Vercel paso a paso: [docs/puesta-en-marcha.md](docs/puesta-en-marcha.md).
 
 ## Desarrollo local
 

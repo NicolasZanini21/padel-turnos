@@ -203,6 +203,13 @@ select tst.ok(not exists (select 1 from public.notificaciones n join public.rese
                   'saltear no manda mail de cancelación');
 select tst.ok((select public.reactivar_fecha_fija((select (j ->> 'id')::bigint from tst.tf), (select fecha from tst.ctx) + 7)) = 'reactivada',
                   'reactivar una fecha salteada');
+select tst.ok((select estado = 'confirmada' and cancelada_en is null from public.reservas
+                where turno_fijo_id = (select (j ->> 'id')::bigint from tst.tf)
+                  and inicio = (select t20 from tst.ctx) + interval '7 days'), 'reactivar vuelve a confirmar la misma fila');
+select tst.ok((select n.estado = 'pendiente' from public.notificaciones n join public.reservas r on r.id = n.reserva_id
+                where r.turno_fijo_id = (select (j ->> 'id')::bigint from tst.tf)
+                  and r.inicio = (select t20 from tst.ctx) + interval '7 days' and n.tipo = 'recordatorio'),
+              'reactivar vuelve a programar el recordatorio');
 select tst.como_anon();
 select tst.ok((select estado from public.disponibilidad((select fecha from tst.ctx) + 7) where cancha_id = 2 and inicio = (select t20 from tst.ctx) + interval '7 days') = 'ocupado',
                   'la fecha reactivada vuelve a estar ocupada');
