@@ -15,3 +15,11 @@ grant select                         on public.notificaciones         to authent
 grant select                         on public.admins                 to authenticated;
 grant select, insert, update         on public.turnos_fijos           to authenticated;
 grant select, insert, update, delete on public.turno_fijo_excepciones to authenticated;
+
+-- Permisos para la función de mails (procesar-notificaciones), que usa la service role.
+-- Sin estos grants reclama el mail, no puede leer la reserva y lo deja trabado en "enviando".
+grant usage on schema public to service_role;
+grant select                 on public.config         to service_role;
+grant select                 on public.canchas        to service_role;
+grant select                 on public.reservas       to service_role;
+grant select, update         on public.notificaciones to service_role;
