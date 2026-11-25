@@ -8,7 +8,12 @@ const montserrat = Montserrat({ variable: "--font-montserrat", subsets: ["latin"
 export const metadata: Metadata = {
   title: { default: "Global Padel Center · Reservá tu cancha", template: "%s · Global Padel Center" },
   description: "Reservá tu cancha de pádel en Global Padel Center, Rosario. Elegí día y horario y coordiná el pago por WhatsApp.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  // Para que la imagen al compartir el link tenga una URL absoluta. En Vercel, si no está
+  // NEXT_PUBLIC_SITE_URL, usa el dominio de producción que Vercel informa solo.
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ??
+      (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000"),
+  ),
   openGraph: { siteName: "Global Padel Center", locale: "es_AR", type: "website" },
 };
 
